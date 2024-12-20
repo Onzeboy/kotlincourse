@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation_view">
+    <!-- Группа для Admin -->
+        <item
+            android:id="@+id/nav_add_product"
+            android:title="Add Product" />
+        <item
+            android:id="@+id/nav_product_list"
+            android:title="Product List" />
+        <item
+            android:id="@+id/nav_cart"
+            android:title="Cart" />
+        <item
+            android:id="@+id/nav_order"
+            android:title="Orders" />
+    <item
+        android:id="@+id/nav_order_summary"
+        android:title="OrdersAdmin" />
+    <item
+        android:id="@+id/nav_logout"
+        android:title="Logout" />
+</menu>

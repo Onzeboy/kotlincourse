@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.nzby.coursekotlin.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_gallery"
+        android:name="com.nzby.coursekotlin.ui.gallery.GalleryFragment"
+        android:label="@string/menu_gallery"
+        tools:layout="@layout/fragment_gallery" />
+
+    <fragment
+        android:id="@+id/nav_slideshow"
+        android:name="com.nzby.coursekotlin.ui.slideshow.SlideshowFragment"
+        android:label="@string/menu_slideshow"
+        tools:layout="@layout/fragment_slideshow" />
+
+    <fragment
+        android:id="@+id/nav_add_product"
+        android:name="com.nzby.coursekotlin.fragments.NewProductActivity"
+        android:label="Add Product"
+        tools:layout="@layout/fragment_add_product" />
+
+    <fragment
+        android:id="@+id/nav_product_list"
+        android:name="com.nzby.coursekotlin.fragments.ProductListFragment"
+        android:label="Product List"
+        tools:layout="@layout/fragment_product_list" />
+
+    <fragment
+        android:id="@+id/nav_cart"
+        android:name="com.nzby.coursekotlin.fragments.CartFragment"
+        android:label="Cart"
+        tools:layout="@layout/fragment_cart">
+        <action
+            android:id="@+id/action_cartFragment_to_addressInputFragment"
+            app:destination="@id/nav_address_input" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_order"
+        android:name="com.nzby.coursekotlin.fragments.OrdersFragment"
+        android:label="Orders"
+        tools:layout="@layout/fragment_orders">
+        <action
+            android:id="@+id/action_ordersFragment_to_orderDetailsFragment"
+            app:destination="@id/nav_order_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_order_details"
+        android:name="com.nzby.coursekotlin.fragments.OrderDetailsFragment"
+        android:label="Order Details">
+        <argument
+            android:name="orderId"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_address_input"
+        android:name="com.nzby.coursekotlin.fragments.FragmentAddressInput"
+        android:label="Address Input"
+        tools:layout="@layout/fragment_address_input">
+        <argument
+            android:name="userId"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_order_confirmation"
+        android:name="com.nzby.coursekotlin.fragments.OrderConfirmationFragment"
+        android:label="Order Confirmation"
+        tools:layout="@layout/fragment_order_confirmation">
+        <argument
+            android:name="orderId"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_order_summary"
+        android:name="com.nzby.coursekotlin.fragments.OrderSummaryFragment"
+        android:label="Orders"
+        tools:layout="@layout/fragment_order_summary">
+        <action
+            android:id="@+id/action_orderSummary_to_orderDetailState"
+            app:destination="@id/nav_order_detail_state"/>
+    </fragment>
+    <fragment
+        android:id="@+id/nav_order_detail_state"
+        android:name="com.nzby.coursekotlin.fragments.OrderDetailStateFragment"
+        android:label="Order Detail State"
+        tools:layout="@layout/fragment_order_details_state">
+        <argument
+            android:name="orderId"
+            app:argType="long" />
+    </fragment>
+
+</navigation>

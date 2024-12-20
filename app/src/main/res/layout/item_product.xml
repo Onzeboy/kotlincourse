@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <!-- ImageView для изображения продукта -->
+    <ImageView
+        android:id="@+id/imageViewProduct"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:contentDescription="Product Image"
+        android:scaleType="centerCrop" />
+
+    <!-- TextView для имени продукта -->
+    <TextView
+        android:id="@+id/textViewProductName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/imageViewProduct"
+        app:layout_constraintEnd_toStartOf="@id/buttonAddToCart"
+        android:paddingStart="8dp"
+        android:text="Product Name"
+        android:textStyle="bold"
+        android:textSize="16sp" />
+
+    <!-- TextView для цены продукта -->
+    <TextView
+        android:id="@+id/textViewProductPrice"
+        android:layout_width="0dp"
+        android:paddingStart="8dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/textViewProductName"
+        app:layout_constraintStart_toStartOf="@id/textViewProductName"
+        app:layout_constraintEnd_toEndOf="@id/textViewProductName"
+        android:text="Price: $0.00"
+        android:textColor="@android:color/holo_green_dark"
+        android:textSize="14sp" />
+
+    <!-- Кнопка добавления в корзину -->
+    <Button
+        android:id="@+id/buttonAddToCart"
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Add to Cart"
+        android:padding="8dp"
+        android:backgroundTint="@color/teal_200"
+        android:textColor="@android:color/white" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

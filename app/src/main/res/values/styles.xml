@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Базовая тема приложения -->
+    <style name="Theme.MyApplication" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Здесь можно добавлять параметры для вашей темы -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!-- Стиль для AppBarOverlay -->
+    <style name="Theme.MyApplication.AppBarOverlay">
+        <!-- Параметры для AppBar -->
+        <item name="android:windowActionBar">false</item>
+    </style>
+
+    <!-- Стиль для PopupOverlay -->
+    <style name="Theme.MyApplication.PopupOverlay">
+        <!-- Параметры для PopupOverlay -->
+    </style>
+</resources>
