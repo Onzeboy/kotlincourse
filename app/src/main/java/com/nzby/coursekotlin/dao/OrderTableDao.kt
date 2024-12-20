@@ -14,6 +14,10 @@ interface OrderTableDao {
 
     @Query("SELECT * FROM order_table")
     suspend fun getAllOrders(): List<OrderTable>
+
+    @Query("SELECT * FROM order_table")
+    suspend fun getAllOrdersWithItems(): List<OrderWithItems>
+
     @Query("SELECT * FROM order_table")
     fun getAllOrdersNonSusp(): List<OrderTable>
 

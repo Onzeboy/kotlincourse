@@ -88,12 +88,12 @@
         android:label="Orders"
         tools:layout="@layout/fragment_order_summary">
         <action
-            android:id="@+id/action_orderSummary_to_orderDetailState"
+            android:id="@+id/action_orderSummaryToOrderDetailState"
             app:destination="@id/nav_order_detail_state"/>
     </fragment>
     <fragment
         android:id="@+id/nav_order_detail_state"
-        android:name="com.nzby.coursekotlin.fragments.OrderDetailStateFragment"
+        android:name="com.nzby.coursekotlin.fragments.OrderDetailsStateFragment"
         android:label="Order Detail State"
         tools:layout="@layout/fragment_order_details_state">
         <argument

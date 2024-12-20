@@ -1,66 +1,73 @@
 package com.nzby.coursekotlin.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.nzby.coursekotlin.R
+import com.nzby.coursekotlin.UserApplication
 import com.nzby.coursekotlin.dao.AppDatabase
+import com.nzby.coursekotlin.dao.OrderItemDao
 import com.nzby.coursekotlin.dao.OrderTableDao
-import com.nzby.coursekotlin.databinding.FragmentOrderSummaryBinding
-import com.nzby.coursekotlin.models.OrderTable
-import com.nzby.coursekotlin.models.OrderStatus
-import com.nzby.coursekotlin.ulits.OrderSummaryAdapter
+import com.nzby.coursekotlin.databinding.FragmentOrdersBinding
+import com.nzby.coursekotlin.models.OrderWithItems
 import com.nzby.coursekotlin.utils.OrderAdapter
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class OrderSummaryFragment : Fragment() {
-    private lateinit var binding: FragmentOrderSummaryBinding
-    private lateinit var orderTableDao: OrderTableDao // Ваш DAO
+
+    private lateinit var binding: FragmentOrdersBinding
+    private lateinit var orderTableDao: OrderTableDao
+    private lateinit var orderItemDao: OrderItemDao
+    private lateinit var orderAdapter: OrderAdapter
+    private val orders = mutableListOf<OrderWithItems>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentOrderSummaryBinding.inflate(inflater, container, false)
-
-        // Инициализация DAO
-        val db = AppDatabase.getInstance(requireContext())
-        orderTableDao = db.orderTableDao()
-
-        // Загружаем данные асинхронно
-        loadOrders()
-
+    ): View? {
+        binding = FragmentOrdersBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val database = AppDatabase.getInstance(requireContext())
+        orderTableDao = database.orderTableDao()
+        orderItemDao = database.orderItemDao()
+
+        binding.recyclerViewOrders.layoutManager = LinearLayoutManager(requireContext())
+        orderAdapter = OrderAdapter(orders) { order ->
+            Log.d("OrdersFragment", "Clicked order ID: ${order.order.id.toLong()}")
+            // Используем правильное имя действия для перехода в OrderDetailsStateFragment
+            val action = OrderSummaryFragmentDirections.actionOrderSummaryToOrderDetailState(order.order.id.toLong())
+            findNavController().navigate(action)
+        }
+        binding.recyclerViewOrders.adapter = orderAdapter
+        binding.recyclerViewOrders.visibility = View.GONE
+
+        loadOrders()
+    }
+
     private fun loadOrders() {
-        // Используем lifecycleScope для асинхронной работы в корутине
-        lifecycleScope.launch {
-            // Фоновый поток для запроса данных
-            val orders = withContext(Dispatchers.IO) {
-                orderTableDao.getAllOrders() // Получаем заказы из базы данных
+        val userId = (requireActivity().application as UserApplication).userId
+        CoroutineScope(Dispatchers.IO).launch {
+            val orderList = orderTableDao.getAllOrdersWithItems()
+            launch(Dispatchers.Main) {
+                Log.d("OrdersFragment", "Loaded orders: $orderList")
+                orders.clear()
+                orders.addAll(orderList)
+                orderAdapter.notifyDataSetChanged()
+                binding.recyclerViewOrders.visibility = View.VISIBLE
             }
-
-            // Обновляем UI на главном потоке
-            val adapter = OrderSummaryAdapter(orders) { order ->
-                val action = OrderSummaryFragmentDirections.actionOrderSummaryToOrderDetailState(order.id.toLong())
-                findNavController().navigate(action)
-            }
-
-            // Устанавливаем адаптер и layout manager
-            binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-            binding.recyclerView.adapter = adapter
         }
     }
-}
 
+}
 

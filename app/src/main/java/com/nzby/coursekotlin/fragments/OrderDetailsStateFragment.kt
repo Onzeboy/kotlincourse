@@ -1,5 +1,4 @@
 package com.nzby.coursekotlin.fragments
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,13 +7,17 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.nzby.coursekotlin.R
-import com.nzby.coursekotlin.models.OrderStatus
+import com.nzby.coursekotlin.utils.OrderDetailsStateAdapter
+import com.nzby.coursekotlin.dao.OrderTableDao
+import com.nzby.coursekotlin.models.OrderDetails
+import kotlinx.coroutines.launch
 
-class OrderDetailStateFragment : Fragment() {
+class OrderDetailsStateFragment : Fragment() {
 
     private lateinit var orderIdTextView: TextView
     private lateinit var orderCustomerNameTextView: TextView
@@ -23,18 +26,23 @@ class OrderDetailStateFragment : Fragment() {
     private lateinit var orderStatusTextView: TextView
     private lateinit var statusSpinner: Spinner
     private lateinit var confirmStatusButton: Button
+    private lateinit var orderSummaryProductsRecyclerView: RecyclerView
+
+    private var orderTableDao: OrderTableDao? = null
+    private var orderId: Long = -1 // Здесь хранится ID заказа, который передаётся в фрагмент
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Инфлейтим макет для этого фрагмента
         return inflater.inflate(R.layout.fragment_order_details_state, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Привязка элементов
+        // Инициализируем представления (вьюшки)
         orderIdTextView = view.findViewById(R.id.orderIdTextView)
         orderCustomerNameTextView = view.findViewById(R.id.orderCustomerNameTextView)
         orderDateTextView = view.findViewById(R.id.orderDateTextView)
@@ -42,56 +50,45 @@ class OrderDetailStateFragment : Fragment() {
         orderStatusTextView = view.findViewById(R.id.orderStatusTextView)
         statusSpinner = view.findViewById(R.id.statusSpinner)
         confirmStatusButton = view.findViewById(R.id.confirmStatusButton)
+        orderSummaryProductsRecyclerView = view.findViewById(R.id.orderSummatyProductsRecyclerView)
 
-        // Получаем ID заказа из аргументов
-        val orderId = arguments?.getInt("ORDER_ID", 0) ?: return
+        // Настроим RecyclerView для отображения списка продуктов в заказе
+        orderSummaryProductsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        orderSummaryProductsRecyclerView.adapter = OrderDetailsStateAdapter()
 
-        // Инициализация Spinner для выбора статуса
-        val statusAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_item,
-            OrderStatus.values()
-        )
-        statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        statusSpinner.adapter = statusAdapter
+        // Настроим Spinner для выбора нового статуса заказа
+        val statusOptions = listOf("PENDING", "PROCESSING", "COMPLETED", "CANCELED")
+        val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, statusOptions)
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        statusSpinner.adapter = spinnerAdapter
 
-        // Загружаем подробности заказа
-        loadOrderDetails(orderId)
+        // Загружаем детали заказа
+        loadOrderDetails()
 
-        // Обработчик нажатия на кнопку "Confirm"
+        // Обработчик для кнопки подтверждения изменения статуса
         confirmStatusButton.setOnClickListener {
-            updateOrderStatus(orderId)
+            val selectedStatus = statusSpinner.selectedItem.toString()
+            updateOrderStatus(selectedStatus)  // Обновляем статус заказа
         }
     }
 
-    private fun loadOrderDetails(orderId: Int) {
-        // Пример загрузки данных (здесь вы можете получить данные из вашей базы)
-        // Загружаем подробности о заказе (эти данные должны быть реальными)
-        orderIdTextView.text = "Order ID: $orderId"
-        orderCustomerNameTextView.text = "Customer Name: John Doe" // Пример имени
-        orderDateTextView.text = "Order Date: 2024-12-20" // Пример даты
-        orderTotalPriceTextView.text = "Total Price: $99.99" // Пример суммы
+    private fun updateOrderStatus(newStatus: String) {
+        // Обновляем текст статуса на экране
+        orderStatusTextView.text = "Status: $newStatus"
 
-        // Пример статуса, обычно будет передан из базы данных
-        val status = OrderStatus.PENDING
-        orderStatusTextView.text = "Status: ${status.name}"
-
-        // Устанавливаем текущий статус в Spinner
-        val statusPosition = OrderStatus.values().indexOf(status)
-        statusSpinner.setSelection(statusPosition)
+        // Меняем цвет текста в зависимости от статуса
+        val color = when (newStatus) {
+            "COMPLETED" -> android.R.color.holo_green_dark  // Зеленый для завершенного
+            "CANCELED" -> android.R.color.holo_red_dark   // Красный для отмененного
+            else -> android.R.color.black  // Черный для прочих статусов
+        }
+        orderStatusTextView.setTextColor(resources.getColor(color, null))
     }
 
-    private fun updateOrderStatus(orderId: Int) {
-        // Получаем выбранный статус из Spinner
-        val selectedStatus = statusSpinner.selectedItem as OrderStatus
-
-        // Обновляем статус заказа в базе данных
-        // Это нужно будет сделать через ваш DAO
-
-        // Пример обновления (вам нужно будет внедрить реальную логику)
-        Toast.makeText(requireContext(), "Status updated to: ${selectedStatus.name}", Toast.LENGTH_SHORT).show()
-
-        // Обновление UI
-        orderStatusTextView.text = "Status: ${selectedStatus.name}"
+    private fun loadOrderDetails() {
+        lifecycleScope.launch {
+            // Запрос к DAO для получения информации о заказе по ID
+            val orderDetails = orderTableDao?.getOrderDetailsById(orderId.toInt()) ?: emptyList()
+        }
     }
 }
