@@ -22,6 +22,6 @@ data class OrderTable(
     val city: String,
     val street: String,
     val home: String,
-    val totalPrice: Double = 0.0,
+    val totalPrice: Double = 0.00,
     var status: OrderStatus = OrderStatus.PENDING
 )

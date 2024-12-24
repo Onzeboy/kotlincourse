@@ -1,6 +1,7 @@
 package com.nzby.coursekotlin.activity
 
 import android.os.Bundle
+import android.text.InputFilter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -21,10 +22,11 @@ class RegisterActivity : AppCompatActivity() {
 
         val usernameEditText = findViewById<EditText>(R.id.usernameEditText)
         val passwordEditText = findViewById<EditText>(R.id.passwordEditText)
-        usernameEditText.inputType =
-            android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_WORDS
-        val phoneEditText = findViewById<EditText>(R.id.phoneEditText) // Поле телефона
+        val phoneEditText = findViewById<EditText>(R.id.phoneEditText)
         val registerButton = findViewById<Button>(R.id.registerButton)
+
+        // Устанавливаем ограничения длины пароля
+        passwordEditText.filters = arrayOf(InputFilter.LengthFilter(40))
 
         registerButton.setOnClickListener {
             val username = usernameEditText.text.toString()
@@ -47,7 +49,12 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Валидация телефона
+            // Проверка длины пароля
+            if (password.length < 3) {
+                passwordEditText.error = "Пароль должен содержать минимум 3 символа"
+                return@setOnClickListener
+            }
+
             if (phone.isEmpty()) {
                 phoneEditText.error = "Номер телефона отсутствует"
                 return@setOnClickListener

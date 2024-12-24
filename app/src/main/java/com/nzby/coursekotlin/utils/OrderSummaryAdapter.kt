@@ -33,9 +33,9 @@ class OrderSummaryAdapter(
         private val orderStatusTextView: TextView = itemView.findViewById(R.id.orderStatusTextView)
 
         fun bind(order: OrderTable) {
-            orderCustomerNameTextView.text = "Customer Name: ${order.userId}"  // Используйте имя пользователя, если это необходимо
-            orderTotalPriceTextView.text = "Total Price: $${order.totalPrice}"
-            orderStatusTextView.text = "Status: ${order.status.name}"
+            orderCustomerNameTextView.text = "Заказчик: ${order.userId}"  // Используйте имя пользователя, если это необходимо
+            orderTotalPriceTextView.text = "Общая цена: $${order.totalPrice}"
+            orderStatusTextView.text = "Статус заказа: ${order.status.toString()}"
 
             itemView.setOnClickListener {
                 onOrderClick(order)

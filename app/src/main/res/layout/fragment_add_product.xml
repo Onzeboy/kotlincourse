@@ -37,11 +37,9 @@
             android:id="@+id/editTextQuantity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Колличество"
+            android:hint="Количество"
             android:inputType="number"
-            android:layout_marginTop="16dp"
-            android:text="@={viewModel.productQuantity}"
-            android:textSize="16sp" />
+            app:quantityText="@={viewModel.productQuantity}"/>
 
         <EditText
             android:id="@+id/editTextPrice"
@@ -49,9 +47,7 @@
             android:layout_height="wrap_content"
             android:hint="Цена"
             android:inputType="numberDecimal"
-            android:layout_marginTop="16dp"
-            android:text="@={viewModel.productPrice}"
-            android:textSize="16sp" />
+            app:priceText="@={viewModel.productPrice}" />
 
         <ImageView
             android:id="@+id/imageViewProduct"

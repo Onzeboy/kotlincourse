@@ -31,14 +31,14 @@ interface OrderItemDao {
         order_item.id AS orderItemId,  
         order_item.orderId AS orderId,  
         order_item.productId AS productId, 
-        product.name AS productName, 
-        product.descrpt AS productDescription, 
-        product.price AS productPrice, 
-        product.image AS productImage, 
+        product_history.name AS productName, 
+        product_history.descrpt AS productDescription, 
+        product_history.price AS productPrice, 
+        product_history.image AS productImage, 
         order_item.price AS itemTotalPrice,
         order_item.quantity AS productQuantity
     FROM order_item 
-    INNER JOIN product ON order_item.productId = product.id 
+    INNER JOIN product_history ON order_item.productId = product_history.id 
     WHERE order_item.orderId = :orderId
 """)
     suspend fun getOrderItemsWithProduct(orderId: Long?): List<OrderItemWithProduct>

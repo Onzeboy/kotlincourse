@@ -7,7 +7,7 @@ data class OrderDetails(
     val city: String,
     val street: String,
     val home: String,
-    val totalPrice: Double,
+    val totalPrice: Double = 0.00,
     val itemId: Int,
     val orderId: Int,
     val productId: Int,

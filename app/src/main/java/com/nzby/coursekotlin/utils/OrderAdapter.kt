@@ -28,7 +28,7 @@ class OrderAdapter(
             orderDate.text = "Дата заказа: ${DateConverter.fromTimestamp(order.order.createdAt)}"
             orderAddress.text =
                 "Адрес: ${order.order.city}, ${order.order.street}, ${order.order.home}"
-            orderStatus.text = "Статус: ${order.order.status}"
+            orderStatus.text = "Статус: ${order.order.status.toString()}"
             orderID.text = "${order.order.id}"
 
             // Обработчик клика по элементу

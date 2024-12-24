@@ -4,13 +4,13 @@ import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "product")
-data class Product(
+@Entity(tableName = "product_history")
+data class ProductHistory(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val name: String,
     val descrpt: String,
-    var price: Double = 0.00,
+    val price: Double = 0.0,
     var quantity: Int,
     val image: ByteArray?,
 )

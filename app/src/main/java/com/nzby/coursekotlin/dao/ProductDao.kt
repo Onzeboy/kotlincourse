@@ -1,6 +1,7 @@
 package com.nzby.coursekotlin.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -32,9 +33,12 @@ interface ProductDao {
         image: ByteArray?
     ) // Добавлен `suspend`
 
-    @Query("DELETE FROM product WHERE id = :id")
-    suspend fun deleteProduct(id: Int) // Добавлен `suspend`companion object
+    @Delete
+    suspend fun deleteProduct(product: Product)
 
     @Query("UPDATE Product SET quantity = :newQuantity WHERE id = :productId")
     suspend fun updateQuantity(productId: Int, newQuantity: Int)
+
+    @Query("UPDATE product SET quantity = :quantity, price = :price WHERE id = :id")
+    suspend fun updateProductByAdmin(id: Int, quantity: Int, price: Double)
 }

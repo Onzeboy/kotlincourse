@@ -2,6 +2,7 @@ package com.nzby.coursekotlin.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputFilter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -25,25 +26,33 @@ class LoginActivity : AppCompatActivity() {
         val loginButton = findViewById<Button>(R.id.loginButton)
         val registerButton = findViewById<Button>(R.id.btnRegister)
 
+        // Ограничение длины пароля
+        passwordEditText.filters = arrayOf(InputFilter.LengthFilter(40))
+
         loginButton.setOnClickListener {
             val phone = phoneEditText.text.toString().trim()
             val password = passwordEditText.text.toString().trim()
 
-            // Простая валидация полей
+            // Валидация телефона
             if (phone.isEmpty()) {
                 phoneEditText.error = "Введите номер телефона"
                 return@setOnClickListener
             }
 
-            // Проверка формата телефона
             val phoneRegex = Regex("^(\\+7|8)?\\d{10}$")
             if (!phone.matches(phoneRegex)) {
                 phoneEditText.error = "Неверный формат телефона. Пример: +7XXXXXXXXXX или 8XXXXXXXXXX"
                 return@setOnClickListener
             }
 
+            // Валидация пароля
             if (password.isEmpty()) {
                 passwordEditText.error = "Введите пароль"
+                return@setOnClickListener
+            }
+
+            if (password.length < 3) {
+                passwordEditText.error = "Пароль должен содержать минимум 3 символа"
                 return@setOnClickListener
             }
 
@@ -57,7 +66,7 @@ class LoginActivity : AppCompatActivity() {
                     editor.putString("phone", phone)
                     editor.putString("role", user.role.toString())  // Сохраняем роль пользователя
                     editor.putInt("user_id", user.id)
-                    editor.putString("name", user.username)// Сохраняем id пользователя
+                    editor.putString("name", user.username) // Сохраняем имя пользователя
                     editor.putBoolean("is_logged_in", true)
                     editor.apply()
 

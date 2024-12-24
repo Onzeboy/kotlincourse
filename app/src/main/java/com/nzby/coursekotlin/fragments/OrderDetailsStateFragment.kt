@@ -88,7 +88,7 @@ class OrderDetailsStateFragment : Fragment() {
 
                             // Обновляем UI на главном потоке
                             launch(Dispatchers.Main) {
-                                binding.orderStatusTextView.text = "Статус: $selectedStatus"
+                                binding.orderStatusTextView.text = "Статус: ${selectedStatus.toString()}"
                                 Log.d("OrderDetails", "Статус заказа обновлен в БД и UI: $selectedStatus")
                             }
                         } else {
@@ -113,7 +113,7 @@ class OrderDetailsStateFragment : Fragment() {
 
     private fun setupStatusSpinner() {
         // Массив со статусами заказа
-        val statusList = OrderStatus.values().map { it.name }
+        val statusList = OrderStatus.values().map { it.toString() }
         val spinnerAdapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_item,
@@ -152,7 +152,7 @@ class OrderDetailsStateFragment : Fragment() {
                         val userDao = database.userDao()
                         val UID = userDao.getUserById(order.userId)
                         binding.orderDateTextView.text = "Дата: ${DateConverter.fromTimestamp(order.createdAt)}"
-                        //binding.order.text = "Адрес: ${order.city}, ${order.street}, ${order.home}"
+                        binding.orderAddressTextView.text = "Адрес: ${order.city}, ${order.street}, ${order.home}"
                         binding.orderTotalPriceTextView.text = "Итог: ₽${"%.2f".format(totalPrice)}"
                         binding.orderStatusTextView.text = "Статус: ${order.status}"
                         binding.orderCustomerNameTextView.text = "Заказчик: ${UID!!.username}"

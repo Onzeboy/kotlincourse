@@ -13,5 +13,5 @@ data class OrderItemWithProduct(
     val productPrice: Double,
     val productImage: ByteArray?,
     val productQuantity: Int,
-    val itemTotalPrice: Double = 0.0
+    val itemTotalPrice: Double = 0.00
 )

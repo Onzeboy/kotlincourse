@@ -1,12 +1,13 @@
 package com.nzby.coursekotlin.viewmodels
 
 import android.graphics.Bitmap
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.EditText
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,6 +16,8 @@ import com.nzby.coursekotlin.models.Product
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 class AddProductViewModel(private val productDao: ProductDao) : ViewModel() {
 
@@ -57,8 +60,44 @@ class AddProductViewModel(private val productDao: ProductDao) : ViewModel() {
     }
 
     companion object {
-        // Устанавливаем значение из Int в строку для EditText
-        @BindingAdapter("android:text")
+
+        // Адаптер для работы с ценой (String)
+        @BindingAdapter("app:priceText")
+        @JvmStatic
+        fun setPriceToEditText(view: EditText, value: String?) {
+            if (view.text.toString() != value) {
+                view.setText(value)
+            }
+        }
+
+        @InverseBindingAdapter(attribute = "app:priceText")
+        @JvmStatic
+        fun getPriceFromEditText(view: EditText): String {
+            val text = view.text.toString()
+            return try {
+                val value = BigDecimal(text).setScale(2, RoundingMode.HALF_UP)
+                value.toString()
+            } catch (e: Exception) {
+                "0.00"
+            }
+        }
+
+        @BindingAdapter("app:priceTextAttrChanged")
+        @JvmStatic
+        fun setPriceTextListener(view: EditText, listener: InverseBindingListener?) {
+            view.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                override fun afterTextChanged(s: Editable?) {
+                    listener?.onChange()
+                }
+            })
+        }
+
+        // Адаптер для работы с количеством (Int)
+        @BindingAdapter("app:quantityText")
         @JvmStatic
         fun setIntToEditText(view: EditText, value: Int?) {
             if (view.text.toString() != value?.toString()) {
@@ -66,15 +105,13 @@ class AddProductViewModel(private val productDao: ProductDao) : ViewModel() {
             }
         }
 
-        // Получаем значение из строки и преобразуем его в Int
-        @InverseBindingAdapter(attribute = "android:text")
+        @InverseBindingAdapter(attribute = "app:quantityText")
         @JvmStatic
         fun getIntFromEditText(view: EditText): Int {
             return view.text.toString().toIntOrNull() ?: 0
         }
 
-        // Связываем изменения текста с двусторонним биндингом
-        @BindingAdapter("android:textAttrChanged")
+        @BindingAdapter("app:quantityTextAttrChanged")
         @JvmStatic
         fun setIntTextListener(view: EditText, listener: InverseBindingListener?) {
             view.addTextChangedListener {

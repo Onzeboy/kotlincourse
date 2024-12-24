@@ -14,7 +14,7 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
-            entity = Product::class,
+            entity = ProductHistory::class,
             parentColumns = ["id"],
             childColumns = ["productId"],
             onDelete = ForeignKey.CASCADE
@@ -24,7 +24,7 @@ import androidx.room.PrimaryKey
 data class OrderItem(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val orderId: Long,
-    val productId: Int,
+    val productId: Long,
     val quantity: Int,
-    val price: Double = 0.0,
+    val price: Double = 0.00,
 )

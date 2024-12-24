@@ -17,14 +17,14 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Цена -->
-    <TextView
-        android:id="@+id/textViewProductPrice"
-        android:layout_width="0dp"
+    <EditText
+        android:id="@+id/editTextProductPrice"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="₽0.00"
+        android:inputType="numberDecimal"
+        android:hint="Цена"
         app:layout_constraintTop_toBottomOf="@id/textViewProductName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <!-- Поле для редактирования количества -->
     <EditText
@@ -33,16 +33,26 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:hint="Количество"
-        app:layout_constraintTop_toBottomOf="@id/textViewProductPrice"
+        app:layout_constraintTop_toBottomOf="@id/editTextProductPrice"
         app:layout_constraintStart_toStartOf="parent" />
 
     <!-- Кнопка сохранения -->
     <Button
-        android:id="@+id/buttonSaveQuantity"
+        android:id="@+id/buttonSaveChanges"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Сохранить"
         app:layout_constraintTop_toBottomOf="@id/editTextProductQuantity"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Кнопка удаления -->
+    <Button
+        android:id="@+id/buttonDeleteProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Удалить"
+        app:layout_constraintTop_toBottomOf="@id/editTextProductQuantity"
+        app:layout_constraintStart_toEndOf="@id/buttonSaveChanges"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

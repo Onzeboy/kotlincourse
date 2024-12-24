@@ -1,9 +1,21 @@
 package com.nzby.coursekotlin.models
 
 enum class OrderStatus {
-    PENDING,    // Ожидает подтверждения
-    CONFIRMED,  // Подтвержден
-    SHIPPED,    // Отправлен
-    DELIVERED,  // Доставлен
-    CANCELLED   // Отменен
+    PENDING {
+        override fun toString(): String = "Ожидает подтверждения"
+    },
+    CONFIRMED {
+        override fun toString(): String = "Подтвержден"
+    },
+    SHIPPED {
+        override fun toString(): String = "Отправлен"
+    },
+    DELIVERED {
+        override fun toString(): String = "Доставлен"
+    },
+    CANCELLED {
+        override fun toString(): String = "Отменен"
+    };
+
+    abstract override fun toString(): String
 }

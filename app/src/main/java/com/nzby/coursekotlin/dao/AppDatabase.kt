@@ -12,14 +12,16 @@ import com.nzby.coursekotlin.models.CartItem
 import com.nzby.coursekotlin.models.OrderItem
 import com.nzby.coursekotlin.models.OrderTable
 import com.nzby.coursekotlin.models.Product
+import com.nzby.coursekotlin.models.ProductHistory
 import com.nzby.coursekotlin.models.User
 import com.nzby.coursekotlin.utils.Converters
 import com.nzby.coursekotlin.utils.UserRoleConverter
-@Database(entities = [Product::class, User::class, CartItem::class, OrderTable::class, OrderItem::class], version = 15)
+@Database(entities = [Product::class, ProductHistory::class, User::class, CartItem::class, OrderTable::class, OrderItem::class], version = 18)
 @TypeConverters(Converters::class, UserRoleConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun productDao(): ProductDao
+    abstract fun productHistoryDao(): ProductHistoryDao
     abstract fun userDao(): UserDao
     abstract fun cartItemDao(): CartItemDao
     abstract fun orderTableDao(): OrderTableDao

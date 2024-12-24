@@ -28,6 +28,13 @@
         android:text="Total Price: $99.99"
         android:textSize="14sp"
         android:layout_marginBottom="8dp" />
+    <TextView
+        android:id="@+id/orderAddressTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="adr"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp" />
 
     <TextView
         android:id="@+id/orderStatusTextView"
@@ -48,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="Confirm" />
+        android:text="Подтвердить" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/orderSummatyProductsRecyclerView"

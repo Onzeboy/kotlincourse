@@ -28,10 +28,10 @@ class AdminProductAdapter(
 
         fun bind(product: Product) {
             binding.textViewProductName.text = product.name
-            binding.textViewProductPrice.text = "₽${product.price}"
-            binding.editTextProductQuantity.setText(product.quantity.toString())
+            binding.editTextProductPrice.setText("₽${product.price}") // Используем setText() вместо text
+            binding.editTextProductQuantity.setText(product.quantity.toString()) // Используем setText()
 
-            binding.buttonSaveQuantity.setOnClickListener {
+            binding.buttonSaveChanges.setOnClickListener {
                 val newQuantity = binding.editTextProductQuantity.text.toString().toIntOrNull()
                 if (newQuantity != null) {
                     onQuantityChanged(product, newQuantity)
@@ -44,5 +44,6 @@ class AdminProductAdapter(
                 }
             }
         }
+
     }
 }

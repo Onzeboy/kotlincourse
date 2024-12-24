@@ -12,9 +12,9 @@ import androidx.room.Room
 import com.nzby.coursekotlin.R
 import com.nzby.coursekotlin.UserApplication
 import com.nzby.coursekotlin.dao.AppDatabase
-import com.nzby.coursekotlin.models.CartItem
 import com.nzby.coursekotlin.models.OrderItem
 import com.nzby.coursekotlin.models.OrderTable
+import com.nzby.coursekotlin.models.ProductHistory
 import kotlinx.coroutines.launch
 
 class FragmentAddressInput : Fragment(R.layout.fragment_address_input) {
@@ -133,17 +133,29 @@ class FragmentAddressInput : Fragment(R.layout.fragment_address_input) {
             userCartItems.forEach { cartItem ->
                 val product = database.productDao().getProductById(cartItem.productId)
                 if (product != null) {
-                    val orderItem = OrderItem(
-                        orderId = orderId,
-                        productId = cartItem.productId,
+                    val productHistory = ProductHistory(
+                        name = product.name,
+                        descrpt = product.descrpt,
+                        price = product.price,
                         quantity = cartItem.cartQuantity,
-                        price = product.price * cartItem.cartQuantity
+                        image = product.image
                     )
                     try {
+                        val productHistoryId = database.productHistoryDao().insert(productHistory)
+                        Log.d(
+                            "Cart",
+                            "Товар ${product.name} добавлен в историю с ID $productHistoryId"
+                        )
+                        val orderItem = OrderItem(
+                            orderId = orderId,
+                            productId = productHistoryId,
+                            quantity = cartItem.cartQuantity,
+                            price = productHistory.price * cartItem.cartQuantity
+                        )
                         database.orderItemDao().insert(orderItem)
-                        Log.d("Cart", "Товар ${product.name} добавлен в заказ")
-                    } catch (e: Exception) {
-                        Log.e("Cart", "Ошибка при сохранении товара: ${e.message}", e)
+                    }
+                    catch (e: Exception){
+                        Log.e("Cart", "Ошибка при сохранении товара в истории: ${e.message}", e)
                     }
                 } else {
                     Log.w("Cart", "Продукт с id ${cartItem.productId} не найден")
