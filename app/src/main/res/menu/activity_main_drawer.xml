@@ -5,20 +5,26 @@
     <!-- Группа для Admin -->
         <item
             android:id="@+id/nav_add_product"
-            android:title="Add Product" />
+            android:title="Добавление товаров" />
         <item
             android:id="@+id/nav_product_list"
-            android:title="Product List" />
+            android:title="Список товаров" />
         <item
             android:id="@+id/nav_cart"
-            android:title="Cart" />
+            android:title="Корзина" />
         <item
             android:id="@+id/nav_order"
-            android:title="Orders" />
+            android:title="Заказы" />
+    <item
+        android:id="@+id/nav_finished_order"
+        android:title="История заказов" />
     <item
         android:id="@+id/nav_order_summary"
-        android:title="OrdersAdmin" />
+        android:title="Администрирование заказов" />
+    <item
+        android:id="@+id/nav_admin_product"
+        android:title="Администрирование продуктов" />
     <item
         android:id="@+id/nav_logout"
-        android:title="Logout" />
+        android:title="Выйти" />
 </menu>

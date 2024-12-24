@@ -24,4 +24,5 @@ data class CartItem(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val userId: Int,
     val productId: Int,
+    val cartQuantity: Int
 )

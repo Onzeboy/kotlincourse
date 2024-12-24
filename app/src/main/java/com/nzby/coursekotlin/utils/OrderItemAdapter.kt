@@ -19,6 +19,7 @@ class OrderItemAdapter(private val orderItems: MutableList<OrderItemWithProduct>
     inner class OrderItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val productName: TextView = itemView.findViewById(R.id.product_name)
         private val productPrice: TextView = itemView.findViewById(R.id.product_price)
+        private val productQuantity: TextView = itemView.findViewById(R.id.product_quantity)
         private val productImage: ImageView = itemView.findViewById(R.id.product_image)
         fun toBitmap(bytes: ByteArray?): Bitmap? {
             return bytes?.let {
@@ -36,6 +37,7 @@ class OrderItemAdapter(private val orderItems: MutableList<OrderItemWithProduct>
             }
             productName.text = orderItem.productName
             productPrice.text = "Цена: ₽${orderItem.productPrice}"
+            productQuantity.text = "Количество ${orderItem.productQuantity}"
         }
     }
     private fun bitmapToByteArray(bitmap: Bitmap): ByteArray {

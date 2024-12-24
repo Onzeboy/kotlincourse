@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/nav_home"
         android:name="com.nzby.coursekotlin.ui.home.HomeFragment"
-        android:label="@string/menu_home"
+        android:label="Доставка"
         tools:layout="@layout/fragment_home" />
 
     <fragment
@@ -26,38 +26,64 @@
     <fragment
         android:id="@+id/nav_add_product"
         android:name="com.nzby.coursekotlin.fragments.NewProductActivity"
-        android:label="Add Product"
+        android:label="Добавление продуктов"
         tools:layout="@layout/fragment_add_product" />
 
     <fragment
         android:id="@+id/nav_product_list"
         android:name="com.nzby.coursekotlin.fragments.ProductListFragment"
-        android:label="Product List"
+        android:label="Каталог"
         tools:layout="@layout/fragment_product_list" />
+
+    <fragment
+        android:id="@+id/nav_admin_product"
+        android:name="com.nzby.coursekotlin.fragments.FragmentAdminProductList"
+        android:label="Каталог"
+        tools:layout="@layout/fragment_admin_product_list" />
 
     <fragment
         android:id="@+id/nav_cart"
         android:name="com.nzby.coursekotlin.fragments.CartFragment"
-        android:label="Cart"
+        android:label="Корзина"
         tools:layout="@layout/fragment_cart">
         <action
-            android:id="@+id/action_cartFragment_to_addressInputFragment"
+            android:id="@+id/action_cart_to_address_input"
             app:destination="@id/nav_address_input" />
-    </fragment>
-    <fragment
-        android:id="@+id/nav_order"
-        android:name="com.nzby.coursekotlin.fragments.OrdersFragment"
-        android:label="Orders"
-        tools:layout="@layout/fragment_orders">
-        <action
-            android:id="@+id/action_ordersFragment_to_orderDetailsFragment"
-            app:destination="@id/nav_order_details" />
     </fragment>
 
     <fragment
-        android:id="@+id/nav_order_details"
+        android:id="@+id/nav_order"
+        android:name="com.nzby.coursekotlin.fragments.OrdersFragment"
+        android:label="Заказы"
+        tools:layout="@layout/fragment_orders">
+        <action
+            android:id="@+id/action_orders_to_current_order_details"
+            app:destination="@id/nav_order_current_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_order_current_details"
         android:name="com.nzby.coursekotlin.fragments.OrderDetailsFragment"
-        android:label="Order Details">
+        android:label="Детали заказа">
+        <argument
+            android:name="orderId"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_finished_order"
+        android:name="com.nzby.coursekotlin.fragments.OrderFinishedFragment"
+        android:label="История заказов"
+        tools:layout="@layout/fragment_finished_orders">
+        <action
+            android:id="@+id/action_finished_orders_to_finished_order_details"
+            app:destination="@id/nav_order_finished_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_order_finished_details"
+        android:name="com.nzby.coursekotlin.fragments.OrderDetailsFragment"
+        android:label="Детали заказа">
         <argument
             android:name="orderId"
             app:argType="long" />
@@ -66,7 +92,7 @@
     <fragment
         android:id="@+id/nav_address_input"
         android:name="com.nzby.coursekotlin.fragments.FragmentAddressInput"
-        android:label="Address Input"
+        android:label="Адресс"
         tools:layout="@layout/fragment_address_input">
         <argument
             android:name="userId"
@@ -82,19 +108,21 @@
             android:name="orderId"
             app:argType="integer" />
     </fragment>
+
     <fragment
         android:id="@+id/nav_order_summary"
         android:name="com.nzby.coursekotlin.fragments.OrderSummaryFragment"
-        android:label="Orders"
+        android:label="Заказы"
         tools:layout="@layout/fragment_order_summary">
         <action
             android:id="@+id/action_orderSummaryToOrderDetailState"
-            app:destination="@id/nav_order_detail_state"/>
+            app:destination="@id/nav_order_detail_state" />
     </fragment>
+
     <fragment
         android:id="@+id/nav_order_detail_state"
         android:name="com.nzby.coursekotlin.fragments.OrderDetailsStateFragment"
-        android:label="Order Detail State"
+        android:label="Детали заказа"
         tools:layout="@layout/fragment_order_details_state">
         <argument
             android:name="orderId"

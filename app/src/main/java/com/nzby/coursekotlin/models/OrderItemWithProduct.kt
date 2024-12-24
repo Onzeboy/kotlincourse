@@ -12,5 +12,6 @@ data class OrderItemWithProduct(
     val productDescription: String?,
     val productPrice: Double,
     val productImage: ByteArray?,
+    val productQuantity: Int,
     val itemTotalPrice: Double = 0.0
 )

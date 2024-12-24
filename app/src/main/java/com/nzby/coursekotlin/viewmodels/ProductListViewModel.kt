@@ -24,17 +24,18 @@ class ProductListViewModel(
     val productList: LiveData<List<Product>> = productDao.getAllProductsFlow().asLiveData()
 
     fun addToCart(product: Product, quantity: Int) {
-            val userId = appContext.userId  // Получаем userId из глобального объекта
-            if (userId != -1) {
-                val cartItem = userId?.let {
-                    CartItem(
-                        productId = product.id,
-                        userId = it
-                    )
-                }
-                CoroutineScope(Dispatchers.IO).launch {
-                    cartItem?.let { cartItemDao.insert(it) }
-                }
+        val userId = appContext.userId  // Получаем userId из глобального объекта
+        if (userId != -1) {
+            val cartItem = userId?.let {
+                CartItem(
+                    productId = product.id,
+                    userId = it,
+                    cartQuantity = quantity
+                )
             }
+            CoroutineScope(Dispatchers.IO).launch {
+                cartItem?.let { cartItemDao.insert(it) }
+            }
+        }
     }
 }

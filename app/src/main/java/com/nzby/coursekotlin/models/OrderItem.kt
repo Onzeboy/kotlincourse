@@ -25,5 +25,6 @@ data class OrderItem(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val orderId: Long,
     val productId: Int,
+    val quantity: Int,
     val price: Double = 0.0,
 )

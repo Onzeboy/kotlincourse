@@ -71,6 +71,7 @@ class OrderDetailsFragment : Fragment() {
                         productDescription = item.productDescription,
                         productImage = item.productImage,
                         productPrice = item.productPrice,
+                        productQuantity = item.productQuantity,
                         itemTotalPrice = item.itemTotalPrice
                     )
                 }

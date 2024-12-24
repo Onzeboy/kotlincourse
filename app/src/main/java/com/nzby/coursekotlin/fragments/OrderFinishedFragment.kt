@@ -22,7 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class OrdersFragment : Fragment() {
+class OrderFinishedFragment : Fragment() {
 
     private lateinit var binding: FragmentOrdersBinding
     private lateinit var orderTableDao: OrderTableDao
@@ -54,7 +54,7 @@ class OrdersFragment : Fragment() {
         binding.recyclerViewOrders.adapter = orderAdapter
         binding.recyclerViewOrders.visibility = View.GONE
 
-        loadOrders(listOf(OrderStatus.PENDING, OrderStatus.CONFIRMED, OrderStatus.SHIPPED))
+        loadOrders(listOf(OrderStatus.CANCELLED, OrderStatus.DELIVERED))
     }
 
     private fun loadOrders(statuses: List<OrderStatus>) {
@@ -75,13 +75,13 @@ class OrdersFragment : Fragment() {
                 // Преобразуем статусы в строки
                 val statusStrings = statuses.map { it.name }
 
-                // Получаем заказы с учётом статусов
+                // Получаем заказы с учётом нескольких статусов
                 val orderList = orderTableDao.getOrdersWithItemsByUserIdAndStatuses(userId, statusStrings) ?: emptyList()
 
-                // Переходим на главный поток для обновления UI
                 withContext(Dispatchers.Main) {
                     if (orderList.isEmpty()) {
                         Log.d("OrdersFragment", "Нет заказов с указанными статусами: $statusStrings")
+                        binding.recyclerViewOrders.visibility = View.GONE
                         Toast.makeText(
                             requireContext(),
                             "Нет заказов с выбранными статусами.",
@@ -89,16 +89,14 @@ class OrdersFragment : Fragment() {
                         ).show()
                     } else {
                         Log.d("OrdersFragment", "Loaded orders with statuses $statusStrings: $orderList")
+                        orders.clear()
+                        orders.addAll(orderList)
+                        orderAdapter.notifyDataSetChanged()
+                        binding.recyclerViewOrders.visibility = View.VISIBLE
                     }
-
-                    // Обновляем данные в UI
-                    orders.clear()
-                    orders.addAll(orderList)
-                    orderAdapter.notifyDataSetChanged()
-                    binding.recyclerViewOrders.visibility = if (orders.isEmpty()) View.GONE else View.VISIBLE
                 }
             } catch (e: Exception) {
-                // Обрабатываем общие ошибки
+                // Обрабатываем ошибки
                 Log.e("OrdersFragment", "Ошибка при загрузке заказов: ${e.message}", e)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(

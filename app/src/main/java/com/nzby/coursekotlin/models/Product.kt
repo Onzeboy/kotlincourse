@@ -11,5 +11,6 @@ data class Product(
     val name: String,
     val descrpt: String,
     val price: Double = 0.0,
+    var quantity: Int,
     val image: ByteArray?
 )

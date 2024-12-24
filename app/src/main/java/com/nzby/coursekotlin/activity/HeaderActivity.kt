@@ -49,7 +49,7 @@ class HeaderActivity : AppCompatActivity() {
         })
 
         // Пример: Получаем пользователя по имени "username_example"
-        userViewModel.getUserByUsername("username_example")
+        userViewModel.getUserByPhone("phone_example")
     }
 }
 

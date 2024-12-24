@@ -8,7 +8,7 @@
         android:id="@+id/usernameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Имя пользователя" />
+        android:hint="Номер телефона" />
 
     <EditText
         android:id="@+id/passwordEditText"

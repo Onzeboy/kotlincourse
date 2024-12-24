@@ -2,9 +2,11 @@ package com.nzby.coursekotlin.fragments
 
 import CartAdapter
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -39,7 +41,7 @@ class CartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val currentUserId = 1 // Пример: замените на реальный способ получения userID
+        val currentUserId = (requireActivity().application as UserApplication).userId  // Получаем userId
 
         // Получаем DAO
         cartItemDao = AppDatabase.getInstance(requireContext()).cartItemDao()
@@ -49,7 +51,9 @@ class CartFragment : Fragment() {
         binding.recyclerViewCartItems.layoutManager = LinearLayoutManager(requireContext())
 
         // Загрузка данных корзины
-        loadCartItems(currentUserId)
+        if (currentUserId != null) {
+            loadCartItems(currentUserId)
+        }
 
         // Нажатие на кнопку оформления заказа
         binding.btnCheckout.setOnClickListener {
@@ -58,15 +62,31 @@ class CartFragment : Fragment() {
     }
 
     private fun loadCartItems(currentUserId: Int) {
+        Log.d("CartFragment", "Метод loadCartItems вызван с userId: $currentUserId")
         CoroutineScope(Dispatchers.IO).launch {
-            val cartItemsFromDb = cartItemDao.getAllCartItems()
+            try {
+                val cartItemsFromDb = cartItemDao.getAllCartItems() ?: emptyList()
 
-            // Загружаем товары из базы и обновляем UI
-            launch(Dispatchers.Main) {
-                cartItems.clear()
-                cartItems.addAll(listOf(cartItemsFromDb))
-                updateTotalPrice(currentUserId)
-                updateRecyclerView(currentUserId)
+                if (cartItemsFromDb.isEmpty()) {
+                    Log.w("CartFragment", "Корзина пуста")
+                    launch(Dispatchers.Main) {
+                        Toast.makeText(requireContext(), "Корзина пуста", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Log.d("CartFragment", "Загруженные товары: $cartItemsFromDb")
+                    cartItems.clear()
+                    cartItems.addAll(cartItemsFromDb)
+
+                    launch(Dispatchers.Main) {
+                        updateTotalPrice(currentUserId)
+                        updateRecyclerView(currentUserId)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("CartFragment", "Ошибка загрузки данных корзины", e)
+                launch(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Ошибка загрузки корзины", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -75,13 +95,18 @@ class CartFragment : Fragment() {
         val totalPrice = cartItems
             .filter { it.userId == currentUserId }
             .sumByDouble { cartItem ->
-                val product = productDao.getProductById(cartItem.productId)
-                (product?.price ?: 0.0)
+                val product = productDao.getProductById(cartItem.productId )
+                (product?.price?.times(cartItem.cartQuantity) ?: 0.0)
             }
         binding.tvTotalPrice.text = "Общая стоимость: ₽$totalPrice"
     }
 
     private suspend fun updateRecyclerView(currentUserId: Int) {
+        if (_binding == null) {
+            Log.e("CartFragment", "Binding больше недоступен.")
+            return
+        }
+
         val cartItemList = cartItems
             .filter { it.userId == currentUserId }
             .map { cartItem ->
@@ -89,6 +114,7 @@ class CartFragment : Fragment() {
                 CartItemWithProduct(
                     cartItemId = cartItem.id,
                     cartUserId = cartItem.userId,
+                    cartQuantity = cartItem.cartQuantity,
                     productId = cartItem.productId,
                     productName = product?.name ?: "Unknown",
                     productDescription = product?.descrpt ?: "No description",
@@ -97,27 +123,58 @@ class CartFragment : Fragment() {
                 )
             }
 
+        if (cartItemList.isEmpty()) {
+            Log.w("CartFragment", "Нет данных для отображения.")
+            return
+        }
+
         val adapter = CartAdapter(cartItemList) { cartItemWithProduct ->
             removeItemFromCart(cartItemWithProduct)
         }
+
         binding.recyclerViewCartItems.adapter = adapter
     }
 
     private fun removeItemFromCart(cartItem: CartItemWithProduct) {
         CoroutineScope(Dispatchers.IO).launch {
-            cartItemDao.deleteById(cartItem.cartItemId)
+            try {
+                // Удаляем элемент из базы данных
+                cartItemDao.deleteById(cartItem.cartItemId)
 
-            launch(Dispatchers.Main) {
-                cartItems.removeIf { it.id == cartItem.cartItemId }
-                updateTotalPrice(cartItem.cartUserId)
-                updateRecyclerView(cartItem.cartUserId)
+                // Обновляем количество продукта в базе данных
+                val product = productDao.getProductById(cartItem.productId)
+                if (product != null) {
+                    product.quantity += cartItem.cartQuantity
+                    productDao.update(product)
+                }
+
+                // Обновляем UI на главном потоке
+                launch(Dispatchers.Main) {
+                    cartItems.removeIf { it.id == cartItem.cartItemId }
+                    updateTotalPrice(cartItem.cartUserId)
+                    updateRecyclerView(cartItem.cartUserId)
+                    Toast.makeText(requireContext(), "Товар удален из корзины", Toast.LENGTH_SHORT).show()
+                    refreshFragment()
+                }
+            } catch (e: Exception) {
+                // Обрабатываем ошибки
+                launch(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Ошибка при удалении товара: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+                Log.e("CartFragment", "Ошибка при удалении товара из корзины", e)
             }
         }
     }
+    private fun refreshFragment() {
+        parentFragmentManager.beginTransaction()
+            .detach(this)  // Отсоединяем текущий фрагмент
+            .attach(this)  // Присоединяем его заново
+            .commit()       // Применяем изменения
+    }
 
     private fun handleCheckout() {
-        val userId = (requireActivity().application as UserApplication).userId  // Получаем userId
-        val action = CartFragmentDirections.actionCartFragmentToAddressInputFragment(userId!!)
+        val userId = (requireActivity().application as UserApplication).userId
+        val action = CartFragmentDirections.actionCartToAddressInput(userId!!)
         findNavController().navigate(action)
     }
 

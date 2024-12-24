@@ -8,7 +8,6 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.nzby.coursekotlin.models.Cart
 import com.nzby.coursekotlin.models.CartItem
 import com.nzby.coursekotlin.models.OrderItem
 import com.nzby.coursekotlin.models.OrderTable
@@ -16,13 +15,12 @@ import com.nzby.coursekotlin.models.Product
 import com.nzby.coursekotlin.models.User
 import com.nzby.coursekotlin.utils.Converters
 import com.nzby.coursekotlin.utils.UserRoleConverter
-@Database(entities = [Product::class, User::class, Cart::class, CartItem::class, OrderTable::class, OrderItem::class], version = 8)
+@Database(entities = [Product::class, User::class, CartItem::class, OrderTable::class, OrderItem::class], version = 15)
 @TypeConverters(Converters::class, UserRoleConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun productDao(): ProductDao
     abstract fun userDao(): UserDao
-    abstract fun cartDao(): CartDao
     abstract fun cartItemDao(): CartItemDao
     abstract fun orderTableDao(): OrderTableDao
     abstract fun orderItemDao(): OrderItemDao
@@ -31,7 +29,6 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
-        // Функция получения экземпляра базы данных
         fun getInstance(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -39,12 +36,42 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "app_database"
                 )
-                    // Если версия базы данных изменилась, база будет пересоздана
-                    .fallbackToDestructiveMigration()  // Удаляет старую базу данных при ошибке миграции
+                    .addCallback(AppDatabaseCallback())
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance
             }
+        }
+    }
+    private class AppDatabaseCallback : Callback() {
+        override fun onCreate(db: SupportSQLiteDatabase) {
+            super.onCreate(db)
+            // Создаём триггеры
+            db.execSQL(
+                """
+                CREATE TRIGGER IF NOT EXISTS decrease_product_quantity AFTER INSERT ON cart_item
+                BEGIN
+                    UPDATE Product
+                    SET quantity = quantity - NEW.cartQuantity
+                    WHERE id = NEW.productId AND quantity >= NEW.cartQuantity;
+
+                    UPDATE Product
+                    SET quantity = 0
+                    WHERE id = NEW.productId AND quantity < 0;
+                END;
+            """
+            )
+            db.execSQL(
+                """
+                CREATE TRIGGER IF NOT EXISTS adjust_product_quantity AFTER UPDATE ON cart_item
+                BEGIN
+                    UPDATE Product
+                    SET quantity = quantity + OLD.cartQuantity - NEW.cartQuantity
+                    WHERE id = NEW.productId;
+                END;
+            """
+            )
         }
     }
 }

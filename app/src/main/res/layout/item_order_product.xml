@@ -38,6 +38,15 @@
             android:text="Цена: ₽0.00"
             android:textSize="14sp"
             android:textColor="@android:color/darker_gray" />
+        <!-- Цена товара -->
+        <TextView
+            android:id="@+id/product_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Цена: ₽0.00"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray" />
+
     </LinearLayout>
 
 </LinearLayout>

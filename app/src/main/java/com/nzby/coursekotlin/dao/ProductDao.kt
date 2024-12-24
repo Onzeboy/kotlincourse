@@ -4,10 +4,13 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.nzby.coursekotlin.models.Product
 
 @Dao
 interface ProductDao {
+    @Update
+    suspend fun update(product: Product)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(product: Product) // Добавлен `suspend`
@@ -22,9 +25,16 @@ interface ProductDao {
     suspend fun getProductById(productId: Int): Product?
 
     @Query("UPDATE product SET name = :name, price = :price, image = :image WHERE id = :id")
-    suspend fun updateProduct(id: Int, name: String, price: Int, image: ByteArray?) // Добавлен `suspend`
+    suspend fun updateProduct(
+        id: Int,
+        name: String,
+        price: Int,
+        image: ByteArray?
+    ) // Добавлен `suspend`
 
     @Query("DELETE FROM product WHERE id = :id")
     suspend fun deleteProduct(id: Int) // Добавлен `suspend`companion object
 
+    @Query("UPDATE Product SET quantity = :newQuantity WHERE id = :productId")
+    suspend fun updateQuantity(productId: Int, newQuantity: Int)
 }

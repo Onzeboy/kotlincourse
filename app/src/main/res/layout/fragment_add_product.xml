@@ -20,7 +20,7 @@
             android:id="@+id/editTextName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Product Name"
+            android:hint="Название"
             android:text="@={viewModel.productName}"
             android:textSize="16sp" />
 
@@ -28,16 +28,26 @@
             android:id="@+id/editTextDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Product Description"
+            android:hint="Размер"
             android:layout_marginTop="16dp"
             android:text="@={viewModel.productDescription}"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/editTextQuantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Колличество"
+            android:inputType="number"
+            android:layout_marginTop="16dp"
+            android:text="@={viewModel.productQuantity}"
             android:textSize="16sp" />
 
         <EditText
             android:id="@+id/editTextPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Product Price"
+            android:hint="Цена"
             android:inputType="numberDecimal"
             android:layout_marginTop="16dp"
             android:text="@={viewModel.productPrice}"
@@ -56,13 +66,13 @@
             android:id="@+id/buttonSelectImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Select Image"
+            android:text="Выбрать изображение"
             android:layout_marginTop="16dp" />
         <Button
             android:id="@+id/buttonSave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Save"
+            android:text="Сохранить"
             android:layout_marginTop="16dp" />
     </LinearLayout>
 </layout>

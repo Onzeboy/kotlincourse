@@ -27,12 +27,21 @@ interface OrderTableDao {
     @Query("UPDATE order_table SET userId = :userId, city = :city, street = :street, home = :home WHERE id = :id")
     suspend fun updateOrder(id: Int, userId: Int, city: String, street: String, home: String)
 
+    @Update
+    suspend fun updateOrderWithoutParameters(order: OrderTable)
+
     @Query("DELETE FROM order_table WHERE id = :id")
     suspend fun deleteOrder(id: Int)
 
     @Transaction // Указывает, что запрос использует несколько таблиц
     @Query("SELECT * FROM order_table WHERE userId = :userId")
     suspend fun getOrdersWithItemsByUserId(userId: Int): List<OrderWithItems>
+
+    @Transaction
+    @Query("SELECT * FROM order_table WHERE userId = :userId AND status IN (:statuses)")
+    suspend fun getOrdersWithItemsByUserIdAndStatuses(userId: Int, statuses: List<String>): List<OrderWithItems>
+
+
 
     @Transaction
     @Query("""

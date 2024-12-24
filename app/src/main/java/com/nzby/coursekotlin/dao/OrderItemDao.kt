@@ -34,8 +34,9 @@ interface OrderItemDao {
         product.name AS productName, 
         product.descrpt AS productDescription, 
         product.price AS productPrice, 
-        product.image AS productImage, -- добавлено поле для изображения
-        order_item.price AS itemTotalPrice  
+        product.image AS productImage, 
+        order_item.price AS itemTotalPrice,
+        order_item.quantity AS productQuantity
     FROM order_item 
     INNER JOIN product ON order_item.productId = product.id 
     WHERE order_item.orderId = :orderId

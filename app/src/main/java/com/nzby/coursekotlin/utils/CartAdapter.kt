@@ -33,13 +33,14 @@ class CartAdapter(
         private val itemName: TextView = itemView.findViewById(R.id.cart_item_name)
         private val itemDescription: TextView = itemView.findViewById(R.id.cart_item_description)
         private val itemPrice: TextView = itemView.findViewById(R.id.cart_item_price)
+        private val itemQuantity: TextView = itemView.findViewById(R.id.product_quantity)
         private val removeButton: ImageView = itemView.findViewById(R.id.cart_item_remove)
 
         fun bind(cartItem: CartItemWithProduct) {
             itemName.text = cartItem.productName
             itemDescription.text = cartItem.productDescription
             itemPrice.text = "₽${cartItem.productPrice}"
-
+            itemQuantity.text = "Кол-во: ${cartItem.cartQuantity}"
             // Загружаем изображение, если оно есть
             cartItem.productImage?.let {
                 val bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)

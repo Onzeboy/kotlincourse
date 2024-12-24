@@ -12,16 +12,16 @@ import kotlinx.coroutines.launch
 
 class UserViewModel(application: Application) : AndroidViewModel(application) {
 
-        private val userDao: UserDao = AppDatabase.getInstance(application).userDao()
+    private val userDao: UserDao = AppDatabase.getInstance(application).userDao()
 
-        private val _user = MutableLiveData<User?>()
-        val user: LiveData<User?> = _user
+    private val _user = MutableLiveData<User?>()
+    val user: LiveData<User?> = _user
 
-        fun getUserByUsername(username: String) {
-            viewModelScope.launch {
-                val userFromDb = userDao.getUserByUsername(username)
-                _user.postValue(userFromDb)
-            }
+    fun getUserByPhone(phone: String) {
+        viewModelScope.launch {
+            val userFromDb = userDao.getUserByPhone(phone)
+            _user.postValue(userFromDb)
         }
+    }
 }
 

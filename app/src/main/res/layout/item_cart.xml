@@ -50,9 +50,19 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black"
             android:paddingTop="4dp" />
+
     </LinearLayout>
 
-    <!-- Кнопка удаления (например, иконка мусорного ведра) -->
+
+    <TextView
+        android:id="@+id/product_quantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="@android:color/holo_red_dark" />
+
     <ImageView
         android:id="@+id/cart_item_remove"
         android:layout_width="40dp"

@@ -11,7 +11,12 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUser(user: User): Long
 
+    @Query("SELECT * FROM users WHERE id = :UId LIMIT 1")
+    suspend fun getUserById(UId: Int): User?
 
-    @Query("SELECT * FROM users WHERE username = :username LIMIT 1")
-    suspend fun getUserByUsername(username: String): User?
+    @Query("SELECT * FROM users WHERE phone = :phonee LIMIT 1")
+    suspend fun getUserByPhone(phonee: String): User?
+
+    @Query("SELECT * FROM users WHERE phone = :phone LIMIT 1")
+    suspend fun getUserUnique(phone: String): User?
 }

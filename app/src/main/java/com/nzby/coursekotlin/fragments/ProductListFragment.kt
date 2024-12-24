@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nzby.coursekotlin.dao.AppDatabase
 import com.nzby.coursekotlin.databinding.FragmentProductListBinding
@@ -56,8 +56,7 @@ class ProductListFragment : Fragment() {
 
         // Инициализация адаптера
         adapter = ProductAdapter { product, quantity ->
-            // Здесь вызываем метод addToCart
-            addToCart(product, quantity, cartItemDao, productDao)
+            addToCart(product, quantity, cartItemDao, productDao) // Передаем продукт и количество в корзину
         }
 
         // Настройка RecyclerView
@@ -71,22 +70,57 @@ class ProductListFragment : Fragment() {
     }
 
     private fun addToCart(product: Product, quantity: Int, cartItemDao: CartItemDao, productDao: ProductDao) {
-            val userId = (requireActivity().application as UserApplication).userId  // Получаем userId
+        val userId = (requireActivity().application as UserApplication).userId
 
-            // Выполняем запрос в фоновом потоке
-            CoroutineScope(Dispatchers.IO).launch {
+        if (userId == null) {
+            Toast.makeText(requireContext(), "Ошибка: пользователь не авторизован", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-                    val cartItem = CartItem(
+        // Выполняем запрос в фоновом потоке
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // Проверяем, достаточно ли товара на складе
+                val productInDb = productDao.getProductById(product.id)
+                if (productInDb == null || productInDb.quantity < quantity) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        Toast.makeText(requireContext(), "Недостаточно товара на складе", Toast.LENGTH_SHORT).show()
+                    }
+                    return@launch
+                }
+
+                // Проверяем, существует ли уже этот продукт в корзине
+                val existingCartItem = cartItemDao.getCartItemByUserIdAndProductId(userId, product.id)
+                if (existingCartItem != null) {
+                    // Если продукт уже в корзине, увеличиваем его количество
+                    val newQuantity = existingCartItem.cartQuantity + quantity
+                    cartItemDao.updateQuantity(existingCartItem.id, newQuantity)
+                } else {
+                    // Если продукта нет в корзине, добавляем новый элемент
+                    val newCartItem = CartItem(
                         productId = product.id,
-                        userId = userId!!
+                        userId = userId,
+                        cartQuantity = quantity
                     )
+                    cartItemDao.insert(newCartItem)
+                }
 
-                    // Добавляем в корзину в фоновом потоке
-                    cartItemDao.insert(cartItem)
+                // Обновляем количество товара в таблице Product
+                productDao.updateQuantity(product.id, productInDb.quantity - quantity)
+
+                // Уведомляем пользователя на главном потоке
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(requireContext(), "Товар добавлен в корзину", Toast.LENGTH_SHORT).show()
+                }
+
+            } catch (e: Exception) {
+                // Обрабатываем ошибки
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(requireContext(), "Ошибка при добавлении товара: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
-
-
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -4,6 +4,7 @@ data class CartItemWithProduct(
     val cartItemId: Int,
     val cartUserId: Int,  // Rename from userId to cartUserId
     val productId: Int,
+    val cartQuantity: Int,
     val productName: String,
     val productDescription: String,
     val productPrice: Double,

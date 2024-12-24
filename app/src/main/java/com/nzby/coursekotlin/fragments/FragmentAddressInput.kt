@@ -24,7 +24,6 @@ class FragmentAddressInput : Fragment(R.layout.fragment_address_input) {
     private lateinit var homeInput: EditText
     private lateinit var submitButton: Button
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -53,14 +52,32 @@ class FragmentAddressInput : Fragment(R.layout.fragment_address_input) {
             val street = streetInput.text.toString().trim()
             val home = homeInput.text.toString().trim()
 
-            if (city.isEmpty() || street.isEmpty() || home.isEmpty()) {
-                Toast.makeText(requireContext(), "Заполните все поля", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+            if (validateInputs(city, street, home)) {
+                // Логика создания заказа
+                handleOrderCreation(userId, city, street, home)
             }
-
-            // Логика создания заказа
-            handleOrderCreation(userId, city, street, home)
         }
+    }
+
+    private fun validateInputs(city: String, street: String, home: String): Boolean {
+        var isValid = true
+
+        if (city.isEmpty()) {
+            cityInput.error = "Введите город"
+            isValid = false
+        }
+
+        if (street.isEmpty()) {
+            streetInput.error = "Введите улицу"
+            isValid = false
+        }
+
+        if (home.isEmpty()) {
+            homeInput.error = "Введите номер дома"
+            isValid = false
+        }
+
+        return isValid
     }
 
     private fun handleOrderCreation(userId: Int, city: String, street: String, home: String) {
@@ -96,66 +113,52 @@ class FragmentAddressInput : Fragment(R.layout.fragment_address_input) {
     private suspend fun saveAndClearCartItems(orderId: Long) {
         try {
             // Получаем все элементы корзины
-            val cartItems: List<CartItem> = listOf(database.cartItemDao().getAllCartItems())
+            val cartItems = database.cartItemDao().getAllCartItems() ?: emptyList()
 
-            // Если cartItems пустой, логируем
             if (cartItems.isEmpty()) {
                 Log.d("Cart", "Корзина пуста.")
+                Toast.makeText(requireContext(), "Корзина пуста", Toast.LENGTH_SHORT).show()
+                return
             }
 
-            val userCartItems = mutableListOf<CartItem>()
-            val userId = (requireActivity().application as UserApplication).userId  // Получаем userId
+            val userId = (requireActivity().application as UserApplication).userId
+            val userCartItems = cartItems.filter { it.userId == userId }
 
-            // Извлекаем все элементы корзины для указанного userId
-            for (cartItem in cartItems) {
-                if (cartItem.userId == userId) {
-                    userCartItems.add(cartItem)
-                }
-            }
-
-            // Если нет товаров в корзине для пользователя, выводим сообщение
             if (userCartItems.isEmpty()) {
                 Log.d("Cart", "Нет товаров в корзине для пользователя с id: $userId")
+                Toast.makeText(requireContext(), "Ваша корзина пуста", Toast.LENGTH_SHORT).show()
+                return
             }
 
-            // Для каждого элемента корзины создаем OrderItem
             userCartItems.forEach { cartItem ->
-                // Получаем цену товара
-                val price = database.productDao().getProductById(productId = cartItem.productId)
-
-                if (price != null) {
-                    // Создаем новый объект OrderItem
+                val product = database.productDao().getProductById(cartItem.productId)
+                if (product != null) {
                     val orderItem = OrderItem(
                         orderId = orderId,
                         productId = cartItem.productId,
-                        price = price.price,
+                        quantity = cartItem.cartQuantity,
+                        price = product.price * cartItem.cartQuantity
                     )
-
-                    // Вставляем OrderItem в базу данных
                     try {
                         database.orderItemDao().insert(orderItem)
+                        Log.d("Cart", "Товар ${product.name} добавлен в заказ")
                     } catch (e: Exception) {
-                        // Обрабатываем ошибку вставки
-                        Toast.makeText(
-                            requireContext(),
-                            "Ошибка при сохранении товара в заказе",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        e.printStackTrace()
+                        Log.e("Cart", "Ошибка при сохранении товара: ${e.message}", e)
                     }
                 } else {
-                    // Продукт не найден, логируем или обрабатываем ошибку
-                    Toast.makeText(
-                        requireContext(),
-                        "Продукт с id ${cartItem.productId} не найден.",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Log.w("Cart", "Продукт с id ${cartItem.productId} не найден")
                 }
             }
+
+            // Удаляем товары из корзины после их обработки
+            if (userId != null) {
+                database.cartItemDao().deleteByUserId(userId)
+            }
+            Log.d("Cart", "Корзина пользователя с id: $userId очищена")
+
+            Toast.makeText(requireContext(), "Заказ успешно оформлен", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            // Логируем общие ошибки
-            Log.e("Cart", "Ошибка при сохранении товаров из корзины", e)
-            Toast.makeText(requireContext(), "Произошла ошибка при обработке корзины", Toast.LENGTH_SHORT).show()
+            Log.e("Cart", "Ошибка при обработке корзины: ${e.message}", e)
         }
     }
 
