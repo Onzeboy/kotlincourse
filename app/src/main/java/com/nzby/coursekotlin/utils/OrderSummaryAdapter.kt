@@ -28,13 +28,11 @@ class OrderSummaryAdapter(
     }
 
     inner class OrderSummaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val orderIdTextView: TextView = itemView.findViewById(R.id.orderIdTextView)
         private val orderCustomerNameTextView: TextView = itemView.findViewById(R.id.orderCustomerNameTextView)
         private val orderTotalPriceTextView: TextView = itemView.findViewById(R.id.orderTotalPriceTextView)
         private val orderStatusTextView: TextView = itemView.findViewById(R.id.orderStatusTextView)
 
         fun bind(order: OrderTable) {
-            orderIdTextView.text = "Order ID: ${order.id}"
             orderCustomerNameTextView.text = "Customer Name: ${order.userId}"  // Используйте имя пользователя, если это необходимо
             orderTotalPriceTextView.text = "Total Price: $${order.totalPrice}"
             orderStatusTextView.text = "Status: ${order.status.name}"

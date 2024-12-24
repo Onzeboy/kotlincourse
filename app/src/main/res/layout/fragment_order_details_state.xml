@@ -6,15 +6,6 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/orderIdTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Order ID: 1"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
-
-    <TextView
         android:id="@+id/orderCustomerNameTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

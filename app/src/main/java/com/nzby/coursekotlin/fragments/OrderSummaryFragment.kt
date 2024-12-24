@@ -46,7 +46,7 @@ class OrderSummaryFragment : Fragment() {
         orderAdapter = OrderAdapter(orders) { order ->
             Log.d("OrdersFragment", "Clicked order ID: ${order.order.id.toLong()}")
             // Используем правильное имя действия для перехода в OrderDetailsStateFragment
-            val action = OrderSummaryFragmentDirections.actionOrderSummaryToOrderDetailState(order.order.id.toLong())
+            val action = OrderSummaryFragmentDirections.actionOrdersToOrderDetailState(order.order.id.toLong())
             findNavController().navigate(action)
         }
         binding.recyclerViewOrders.adapter = orderAdapter

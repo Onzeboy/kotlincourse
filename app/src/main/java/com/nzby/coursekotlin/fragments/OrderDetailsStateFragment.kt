@@ -155,7 +155,7 @@ class OrderDetailsStateFragment : Fragment() {
                         //binding.order.text = "Адрес: ${order.city}, ${order.street}, ${order.home}"
                         binding.orderTotalPriceTextView.text = "Итог: ₽${"%.2f".format(totalPrice)}"
                         binding.orderStatusTextView.text = "Статус: ${order.status}"
-                        binding.orderCustomerNameTextView.text = "Заказчик :${UID!!.username}"
+                        binding.orderCustomerNameTextView.text = "Заказчик: ${UID!!.username}"
 
                         // Обновление списка продуктов
                         orderItemList.clear()
@@ -178,16 +178,6 @@ class OrderDetailsStateFragment : Fragment() {
 
         fun fromTimestamp(timestamp: Long): String {
             return dateFormat.format(Date(timestamp))
-        }
-    }
-
-    companion object {
-        fun newInstance(orderId: Long): OrderDetailsStateFragment {
-            return OrderDetailsStateFragment().apply {
-                arguments = Bundle().apply {
-                    putLong("ORDER_ID", orderId)
-                }
-            }
         }
     }
 }

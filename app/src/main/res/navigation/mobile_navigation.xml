@@ -76,14 +76,15 @@
         android:label="История заказов"
         tools:layout="@layout/fragment_finished_orders">
         <action
-            android:id="@+id/action_finished_orders_to_finished_order_details"
+            android:id="@+id/action_orders_to_current_order_details"
             app:destination="@id/nav_order_finished_details" />
     </fragment>
 
     <fragment
         android:id="@+id/nav_order_finished_details"
         android:name="com.nzby.coursekotlin.fragments.OrderDetailsFragment"
-        android:label="Детали заказа">
+        android:label="Детали заказа"
+        tools:layout="@layout/fragment_order_details">
         <argument
             android:name="orderId"
             app:argType="long" />
@@ -98,24 +99,13 @@
             android:name="userId"
             app:argType="integer" />
     </fragment>
-
-    <fragment
-        android:id="@+id/nav_order_confirmation"
-        android:name="com.nzby.coursekotlin.fragments.OrderConfirmationFragment"
-        android:label="Order Confirmation"
-        tools:layout="@layout/fragment_order_confirmation">
-        <argument
-            android:name="orderId"
-            app:argType="integer" />
-    </fragment>
-
     <fragment
         android:id="@+id/nav_order_summary"
         android:name="com.nzby.coursekotlin.fragments.OrderSummaryFragment"
         android:label="Заказы"
         tools:layout="@layout/fragment_order_summary">
         <action
-            android:id="@+id/action_orderSummaryToOrderDetailState"
+            android:id="@+id/action_orders_to_order_detail_state"
             app:destination="@id/nav_order_detail_state" />
     </fragment>
 

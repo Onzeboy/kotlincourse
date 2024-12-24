@@ -38,6 +38,7 @@ class OrderDetailsStateAdapter(
         fun bind(item: OrderItemWithProduct) {
             binding.productName.text = item.productName ?: "Unknown Product"
             binding.productPrice.text = "Цена: ₽${item.productPrice ?: "0.00"}"
+            binding.productQuantity.text = "Кол-во: ${item.productQuantity}"
             item.productImage?.let { bytes ->
                 val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                 binding.productImage.setImageBitmap(bitmap)
