@@ -26,6 +26,7 @@ class AddProductViewModel(private val productDao: ProductDao) : ViewModel() {
     val productPrice = MutableLiveData<String>("")
     val productQuantity = MutableLiveData<Int>(0)
     val productImageBitmap = MutableLiveData<Bitmap?>(null)
+    val productSaved = MutableLiveData<Boolean>() // Флаг успешного сохранения
 
     fun saveProduct() {
         val name = productName.value ?: return
@@ -45,7 +46,12 @@ class AddProductViewModel(private val productDao: ProductDao) : ViewModel() {
         )
 
         viewModelScope.launch(Dispatchers.IO) {
-            productDao.insert(newProduct)
+            try {
+                productDao.insert(newProduct)
+                productSaved.postValue(true) // Успешно сохранено
+            } catch (e: Exception) {
+                productSaved.postValue(false) // Ошибка при сохранении
+            }
         }
     }
 

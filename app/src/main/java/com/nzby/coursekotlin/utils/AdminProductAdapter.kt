@@ -1,3 +1,5 @@
+package com.nzby.coursekotlin.utils
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
@@ -7,7 +9,8 @@ import com.nzby.coursekotlin.models.Product
 
 class AdminProductAdapter(
     private val products: MutableList<Product>,
-    private val onQuantityChanged: (Product, Int) -> Unit
+    private val onQuantityChanged: (Product, Int) -> Unit,
+    private val onDelete: (Product) -> Unit
 ) : RecyclerView.Adapter<AdminProductAdapter.ProductViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
@@ -28,9 +31,10 @@ class AdminProductAdapter(
 
         fun bind(product: Product) {
             binding.textViewProductName.text = product.name
-            binding.editTextProductPrice.setText("₽${product.price}") // Используем setText() вместо text
-            binding.editTextProductQuantity.setText(product.quantity.toString()) // Используем setText()
+            binding.editTextProductPrice.setText(product.price.toString())
+            binding.editTextProductQuantity.setText(product.quantity.toString())
 
+            // Сохранение изменений
             binding.buttonSaveChanges.setOnClickListener {
                 val newQuantity = binding.editTextProductQuantity.text.toString().toIntOrNull()
                 if (newQuantity != null) {
@@ -43,7 +47,11 @@ class AdminProductAdapter(
                     ).show()
                 }
             }
-        }
 
+            // Удаление продукта
+            binding.buttonDeleteProduct.setOnClickListener {
+                onDelete(product)
+            }
+        }
     }
 }

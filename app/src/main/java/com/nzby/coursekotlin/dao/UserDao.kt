@@ -19,4 +19,10 @@ interface UserDao {
 
     @Query("SELECT * FROM users WHERE phone = :phone LIMIT 1")
     suspend fun getUserUnique(phone: String): User?
+
+    @Query("SELECT * FROM users WHERE id != :currentId")
+    suspend fun getAllUsersList(currentId: Int): List<User>
+
+    @Query("UPDATE users SET role = :roleId WHERE id = :userId")
+    suspend fun updateUserRole(userId: Int, roleId: kotlin.String)
 }

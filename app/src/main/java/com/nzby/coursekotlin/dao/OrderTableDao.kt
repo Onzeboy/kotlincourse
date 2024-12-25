@@ -15,7 +15,7 @@ interface OrderTableDao {
     @Query("SELECT * FROM order_table")
     suspend fun getAllOrders(): List<OrderTable>
 
-    @Query("SELECT * FROM order_table")
+    @Query("SELECT * FROM order_table ORDER BY createdAt DESC")
     suspend fun getAllOrdersWithItems(): List<OrderWithItems>
 
     @Query("SELECT * FROM order_table")
@@ -38,7 +38,7 @@ interface OrderTableDao {
     suspend fun getOrdersWithItemsByUserId(userId: Int): List<OrderWithItems>
 
     @Transaction
-    @Query("SELECT * FROM order_table WHERE userId = :userId AND status IN (:statuses)")
+    @Query("SELECT * FROM order_table WHERE userId = :userId AND status IN (:statuses) ORDER BY createdAt DESC")
     suspend fun getOrdersWithItemsByUserIdAndStatuses(userId: Int, statuses: List<String>): List<OrderWithItems>
 
 

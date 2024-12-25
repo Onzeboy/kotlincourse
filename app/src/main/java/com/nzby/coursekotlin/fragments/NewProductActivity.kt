@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -69,6 +70,17 @@ class NewProductActivity : Fragment() {
         // Устанавливаем обработчик нажатия для кнопки сохранения
         binding.buttonSave.setOnClickListener {
             viewModel.saveProduct()
+        }
+
+        // Наблюдаем за статусом сохранения продукта
+        viewModel.productSaved.observe(viewLifecycleOwner) { isSaved ->
+            if (isSaved) {
+                Toast.makeText(requireContext(), "Продукт успешно добавлен", Toast.LENGTH_SHORT).show()
+                // Закрываем фрагмент или выполняем переход
+                requireActivity().supportFragmentManager.popBackStack()
+            } else {
+                Toast.makeText(requireContext(), "Ошибка добавления продукта", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

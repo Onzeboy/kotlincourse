@@ -25,6 +25,9 @@
         android:id="@+id/nav_admin_product"
         android:title="Администрирование продуктов" />
     <item
+        android:id="@+id/nav_user_list"
+        android:title="Управление аккаунтами" />
+    <item
         android:id="@+id/nav_logout"
         android:title="Выйти" />
 </menu>

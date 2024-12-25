@@ -88,8 +88,8 @@ class OrderDetailsStateFragment : Fragment() {
 
                             // Обновляем UI на главном потоке
                             launch(Dispatchers.Main) {
-                                binding.orderStatusTextView.text = "Статус: ${selectedStatus.toString()}"
-                                Log.d("OrderDetails", "Статус заказа обновлен в БД и UI: $selectedStatus")
+                                binding.orderStatusTextView.text = "Статус: ${selectedStatus}"
+                                Log.d("OrderDetails", "Статус заказа обновлен: $selectedStatus")
                             }
                         } else {
                             launch(Dispatchers.Main) {
@@ -113,7 +113,7 @@ class OrderDetailsStateFragment : Fragment() {
 
     private fun setupStatusSpinner() {
         // Массив со статусами заказа
-        val statusList = OrderStatus.values().map { it.toString() }
+        val statusList = OrderStatus.values().map { it.name }
         val spinnerAdapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_item,

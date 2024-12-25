@@ -10,5 +10,5 @@ data class User(
     val username: String,
     val password: String, // Храните хеш пароля, а не сам пароль
     val phone: String? = null,
-    val role: UserRole = UserRole.ROLE_USER
+    var role: UserRole = UserRole.ROLE_USER
 )

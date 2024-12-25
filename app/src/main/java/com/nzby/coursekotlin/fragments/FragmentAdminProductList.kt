@@ -1,6 +1,5 @@
 package com.nzby.coursekotlin.fragments
 
-import AdminProductAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +12,7 @@ import com.nzby.coursekotlin.dao.AppDatabase
 import com.nzby.coursekotlin.dao.ProductDao
 import com.nzby.coursekotlin.databinding.FragmentAdminProductListBinding
 import com.nzby.coursekotlin.models.Product
+import com.nzby.coursekotlin.utils.AdminProductAdapter
 import kotlinx.coroutines.launch
 
 class FragmentAdminProductList : Fragment() {
@@ -37,9 +37,14 @@ class FragmentAdminProductList : Fragment() {
         productDao = AppDatabase.getInstance(requireContext()).productDao()
 
         binding.recyclerViewProducts.layoutManager = LinearLayoutManager(requireContext())
-        adapter = AdminProductAdapter(productList) { product, newQuantity ->
-            updateProductQuantity(product, newQuantity)
-        }
+        adapter = AdminProductAdapter(productList,
+            onQuantityChanged = { product, newQuantity ->
+                updateProductQuantity(product, newQuantity)
+            },
+            onDelete = { product ->
+                deleteProduct(product)
+            }
+        )
         binding.recyclerViewProducts.adapter = adapter
 
         loadProducts()
@@ -62,8 +67,21 @@ class FragmentAdminProductList : Fragment() {
         }
     }
 
+    private fun deleteProduct(product: Product) {
+        lifecycleScope.launch {
+            try {
+                productDao.deleteProduct(product)
+                productList.remove(product)
+                adapter.notifyDataSetChanged()
+                Toast.makeText(requireContext(), "Продукт удален", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Ошибка удаления продукта", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
+

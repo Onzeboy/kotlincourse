@@ -95,6 +95,9 @@
         android:name="com.nzby.coursekotlin.fragments.FragmentAddressInput"
         android:label="Адресс"
         tools:layout="@layout/fragment_address_input">
+        <action
+            android:id="@+id/address_input_to_order"
+            app:destination="@id/nav_order"/>
         <argument
             android:name="userId"
             app:argType="integer" />
@@ -118,5 +121,9 @@
             android:name="orderId"
             app:argType="long" />
     </fragment>
-
+    <fragment
+        android:id="@+id/nav_user_list"
+        android:name="com.nzby.coursekotlin.fragments.UserListFragment"
+        android:label="Каталог"
+        tools:layout="@layout/fragment_user_list" />
 </navigation>

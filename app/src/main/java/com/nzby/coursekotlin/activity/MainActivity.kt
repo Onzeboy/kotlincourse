@@ -93,6 +93,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_add_product -> menuItem.isVisible = userRole == UserRole.ROLE_ADMIN
                 R.id.nav_order_summary -> menuItem.isVisible = userRole == UserRole.ROLE_ADMIN
                 R.id.nav_admin_product -> menuItem.isVisible = userRole == UserRole.ROLE_ADMIN
+                R.id.nav_user_list -> menuItem.isVisible = userRole == UserRole.ROLE_ADMIN
                 R.id.nav_logout -> {
                     menuItem.setOnMenuItemClickListener {
                         performLogout() // Выполнить логаут
